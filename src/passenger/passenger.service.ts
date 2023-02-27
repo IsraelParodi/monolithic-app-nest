@@ -11,7 +11,7 @@ export class PassengerService {
   constructor(
     @InjectModel(PASSENGER.name)
     private readonly passengerModel: Model<IPassenger>,
-  ) {}
+  ) { }
 
   async create(createPassengerDto: CreatePassengerDto): Promise<IPassenger> {
     return await this.passengerModel.create(createPassengerDto);

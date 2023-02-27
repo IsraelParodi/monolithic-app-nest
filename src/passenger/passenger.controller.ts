@@ -10,10 +10,12 @@ import {
 import { PassengerService } from './passenger.service';
 import { CreatePassengerDto } from './dto/create-passenger.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags("Passengers")
 @Controller('passenger')
 export class PassengerController {
-  constructor(private readonly passengerService: PassengerService) {}
+  constructor(private readonly passengerService: PassengerService) { }
 
   @Post()
   create(@Body() createPassengerDto: CreatePassengerDto) {
