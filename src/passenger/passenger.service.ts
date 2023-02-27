@@ -1,26 +1,44 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import { CreatePassengerDto } from './dto/create-passenger.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
+import { PASSENGER } from '../common/models/models';
+import { Model } from 'mongoose';
+import { IPassenger } from 'src/common/interfaces/passenger.interface';
 
 @Injectable()
 export class PassengerService {
-  create(createPassengerDto: CreatePassengerDto) {
-    return 'This action adds a new passenger';
+  constructor(
+    @InjectModel(PASSENGER.name)
+    private readonly passengerModel: Model<IPassenger>,
+  ) {}
+
+  async create(createPassengerDto: CreatePassengerDto): Promise<IPassenger> {
+    return await this.passengerModel.create(createPassengerDto);
   }
 
-  findAll() {
-    return `This action returns all passenger`;
+  async findAll(): Promise<IPassenger[]> {
+    return await this.passengerModel.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} passenger`;
+  async findOne(id: string) {
+    return await this.passengerModel.findById(id);
   }
 
-  update(id: number, updatePassengerDto: UpdatePassengerDto) {
-    return `This action updates a #${id} passenger`;
+  async update(id: string, updatePassengerDto: UpdatePassengerDto) {
+    const passenger = await this.findOne(id);
+
+    await passenger.updateOne(updatePassengerDto, { new: true });
+
+    return { ...passenger.toJSON(), ...updatePassengerDto };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} passenger`;
+  async remove(id: string) {
+    const user = await this.passengerModel.findByIdAndDelete(id);
+    return {
+      status: HttpStatus.OK,
+      message: `User with id ${id} deleted`,
+      user: user,
+    };
   }
 }
